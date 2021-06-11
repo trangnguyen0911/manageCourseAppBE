@@ -32,148 +32,147 @@ import io.jsonwebtoken.impl.DefaultClock;
  */
 @Component
 public class JwtTokenUtil implements Serializable {
+    static final String CLAIM_KEY_USERNAME = "sub";
+    static final String CLAIM_KEY_CREATED = "iat";
+    private static final long serialVersionUID = -3301605591108950415L;
+    private Clock clock = DefaultClock.INSTANCE;
+    
+    @Value("${jwt.signing.key.secret}")
+    private String secret;
 
-  static final String CLAIM_KEY_USERNAME = "sub";
-  static final String CLAIM_KEY_CREATED = "iat";
-  private static final long serialVersionUID = -3301605591108950415L;
-  private Clock clock = DefaultClock.INSTANCE;
+    @Value("${jwt.token.expiration.in.seconds}")
+    private Long expiration = 1200L;
 
-  @Value("${jwt.signing.key.secret}")
-  private String secret;
+    /**
+     * get user name from token
+     * @param token
+     */
+    public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
+    }
 
-  @Value("${jwt.token.expiration.in.seconds}")
-  private Long expiration = 1200L;
+    /**
+    * get issued at date from token
+    * @param token
+    */
+    public Date getIssuedAtDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getIssuedAt);
+    }
 
-  /**
-   * get user name from token
-   * @param token
-   */
-  public String getUsernameFromToken(String token) {
-    return getClaimFromToken(token, Claims::getSubject);
-  }
+    /**
+     * get expiration date from token
+     * @param token
+     */
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
+    }
 
-  /**
-   * get issued at date from token
-   * @param token
-   */
-  public Date getIssuedAtDateFromToken(String token) {
-    return getClaimFromToken(token, Claims::getIssuedAt);
-  }
+    /**
+     * get claim from token
+     * @param <T>
+     * @param token
+     * @param claimsResolver
+     */
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claimsResolver.apply(claims);
+    }
+    
+    /**
+     * get all claims from token
+     * @param token
+     */
+    private Claims getAllClaimsFromToken(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    }
 
-  /**
-   * get expiration date from token
-   * @param token
-   */
-  public Date getExpirationDateFromToken(String token) {
-    return getClaimFromToken(token, Claims::getExpiration);
-  }
+    /**
+     * check whether token is expired
+     * @param token
+     * @return boolean
+     */
+    private Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(clock.now());
+    }
 
-  /**
-   * get claim from token
-   * @param <T>
-   * @param token
-   * @param claimsResolver
-   */
-  public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-    final Claims claims = getAllClaimsFromToken(token);
-    return claimsResolver.apply(claims);
-  }
+    /**
+     * ignore token expiration
+     * @param token
+     * @return boolean
+     */
+    private Boolean ignoreTokenExpiration(String token) {
+        // here you specify tokens, for that the expiration is ignored
+        return false;
+    }
 
-  /**
-   * get all claims from token
-   * @param token
-   */
-  private Claims getAllClaimsFromToken(String token) {
-    return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-  }
+    /**
+     * generate token
+     * @param userDetails
+     * @return string
+     */
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        return doGenerateToken(claims, userDetails.getUsername());
+    }
 
-  /**
-   * check whether token is expired
-   * @param token
-   * @return boolean
-   */
-  private Boolean isTokenExpired(String token) {
-    final Date expiration = getExpirationDateFromToken(token);
-    return expiration.before(clock.now());
-  }
+    /**
+     * do generate token
+     * @param claims
+     * @param subject
+     * @return
+     */
+    private String doGenerateToken(Map<String, Object> claims, String subject) {
+        final Date createdDate = clock.now();
+        final Date expirationDate = calculateExpirationDate(createdDate);
 
-  /**
-   * ignore token expiration
-   * @param token
-   * @return boolean
-   */
-  private Boolean ignoreTokenExpiration(String token) {
-    // here you specify tokens, for that the expiration is ignored
-    return false;
-  }
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(createdDate)
+                .setExpiration(expirationDate).signWith(SignatureAlgorithm.HS512, secret).compact();
+    }
 
-  /**
-   * generate token
-   * @param userDetails
-   * @return string
-   */
-  public String generateToken(UserDetails userDetails) {
-    Map<String, Object> claims = new HashMap<>();
-    return doGenerateToken(claims, userDetails.getUsername());
-  }
+    /**
+     * check whether token can be refreshed
+     * @param token
+     * @return boolean
+     */
+    public Boolean canTokenBeRefreshed(String token) {
+        return (!isTokenExpired(token) || ignoreTokenExpiration(token));
+    }
 
-  /**
-   * do generate token
-   * @param claims
-   * @param subject
-   * @return
-   */
-  private String doGenerateToken(Map<String, Object> claims, String subject) {
-    final Date createdDate = clock.now();
-    final Date expirationDate = calculateExpirationDate(createdDate);
+    /**
+     * refresh token
+     * @param token
+     * @return string
+     */
+    public String refreshToken(String token) {
+        final Date createdDate = clock.now();
+        final Date expirationDate = calculateExpirationDate(createdDate);
 
-    return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(createdDate)
-        .setExpiration(expirationDate).signWith(SignatureAlgorithm.HS512, secret).compact();
-  }
+        final Claims claims = getAllClaimsFromToken(token);
+        claims.setIssuedAt(createdDate);
+        claims.setExpiration(expirationDate);
 
-  /**
-   * check whether token can be refreshed
-   * @param token
-   * @return boolean
-   */
-  public Boolean canTokenBeRefreshed(String token) {
-    return (!isTokenExpired(token) || ignoreTokenExpiration(token));
-  }
+        return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).compact();
+    }
 
-  /**
-   * refresh token
-   * @param token
-   * @return string
-   */
-  public String refreshToken(String token) {
-    final Date createdDate = clock.now();
-    final Date expirationDate = calculateExpirationDate(createdDate);
+    /**
+     * check validate token
+     * @param token
+     * @param userDetails
+     * @return boolean
+     */
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        JwtUserDetails user = (JwtUserDetails) userDetails;
+        final String username = getUsernameFromToken(token);
+        return (username.equals(user.getUsername()) && !isTokenExpired(token));
+    }
 
-    final Claims claims = getAllClaimsFromToken(token);
-    claims.setIssuedAt(createdDate);
-    claims.setExpiration(expirationDate);
-
-    return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).compact();
-  }
-
-  /**
-   * check validate token
-   * @param token
-   * @param userDetails
-   * @return boolean
-   */
-  public Boolean validateToken(String token, UserDetails userDetails) {
-    JwtUserDetails user = (JwtUserDetails) userDetails;
-    final String username = getUsernameFromToken(token);
-    return (username.equals(user.getUsername()) && !isTokenExpired(token));
-  }
-
-  /**
-   * calculate expiration date
-   * @param createdDate
-   * @return Date
-   */
-  private Date calculateExpirationDate(Date createdDate) {
-    return new Date(createdDate.getTime() + expiration * 1000);
-  }
+    /**
+     * calculate expiration date
+     * @param createdDate
+     * @return Date
+     */
+    private Date calculateExpirationDate(Date createdDate) {
+        return new Date(createdDate.getTime() + expiration * 1000);
+    }
 }
