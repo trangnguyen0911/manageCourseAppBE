@@ -85,10 +85,10 @@ public class CourseController {
 	    if (result.hasErrors()) {
 	        String errorMessage = "";
 	        for (ObjectError objectError : result.getAllErrors()) {
-			    errorMessage += objectError.getDefaultMessage() + ". ";
-			}
+			errorMessage += objectError.getDefaultMessage() + ". ";
+	        }
 	        return new ResponseEntity<>(errorMessage, HttpStatus.OK);
-		}
+	    }
 
 	    String status = service.saveCourse(course);
 	    return new ResponseEntity<>(status, HttpStatus.OK);
@@ -108,10 +108,10 @@ public class CourseController {
 	    if (result.hasErrors()) {
 	        String errorMessage = "";
 	        for (ObjectError objectError : result.getAllErrors()) {
-				errorMessage += objectError.getDefaultMessage() + ". ";
-			    }
+		    errorMessage += objectError.getDefaultMessage() + ". ";
+	        }
 	        return new ResponseEntity<>(errorMessage, HttpStatus.OK);
-		}
+	    }
 
 	    String status = service.updateCourse(id, course);
 
