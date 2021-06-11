@@ -19,51 +19,51 @@ import com.shin.demotypescript.model.Student;
  * 01-6-2021 TrangNTT46   Create
  */
 public interface StudentService {
-	/**
-	 * get all active students
-	 * 
-	 * @return List<Student>
-	 */
-	public List<Student> getAllStudents();
+    /**
+     * get all active students
+     * 
+     * @return List<Student>
+     */
+    public List<Student> getAllStudents();
 
-	/**
-	 * search list of students
-	 * 
-	 * @param contentSearch
-	 * @return List<Student>
-	 */
-	public List<Student> getFilterStudent(String contentSearch);
+    /**
+     * search list of students
+     * 
+     * @param contentSearch
+     * @return List<Student>
+     */
+    public List<Student> getFilterStudent(String contentSearch);
 
-	/**
-	 * add new student
-	 * 
-	 * @param student
-	 * @return status of action
-	 */
-	public String saveStudent(Student student);
+    /**
+     * add new student
+     * 
+     * @param student
+     * @return status of action
+     */
+    public String saveStudent(Student student);
 
-	/**
-	 * get student by id
-	 * 
-	 * @param id
-	 * @return Student
-	 */
-	public Student getStudentById(long id);
+    /**
+     * get student by id
+     * 
+     * @param id
+     * @return Student
+     */
+    public Student getStudentById(long id);
 
-	/**
-	 * get student by user name
-	 * 
-	 * @param username
-	 * @return Student
-	 */
-	public Student getStudentByUsername(String username);
+    /**    
+     * get student by user name
+     * 
+     * @param username
+     * @return Student
+     */
+    public Student getStudentByUsername(String username);
 
-	/**
-	 * update student
-	 * 
-	 * @param username
-	 * @param student
-	 * @return status of action
-	 */
-	public String updateStudent(String username, Student student);
+    /**
+     * update student
+     * 
+     * @param username
+     * @param student
+     * @return status of action
+     */
+    public String updateStudent(String username, Student student);
 }
