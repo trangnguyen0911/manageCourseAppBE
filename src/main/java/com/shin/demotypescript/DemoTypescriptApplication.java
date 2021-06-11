@@ -21,13 +21,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @EnableAutoConfiguration
 public class DemoTypescriptApplication {
-
-	/**
-	 * main function
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		SpringApplication.run(DemoTypescriptApplication.class, args);
-	}
-
+    /**
+     * main function
+     * @param args
+     */
+    public static void main(String[] args) {
+        SpringApplication.run(DemoTypescriptApplication.class, args);
+    }
 }
