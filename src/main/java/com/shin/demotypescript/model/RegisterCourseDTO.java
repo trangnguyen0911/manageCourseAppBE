@@ -28,23 +28,23 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class RegisterCourseDTO {
-	private Long courseID;
-	private Long studentID;
-	private String username;
-	private String courseName;
-	private String email;
-	private String instructorEmail;
-	private int duration;
-	private String description;
-	private LocalDate registerDate;
+    private Long courseID;
+    priate Long studentID;
+    private String username;
+    privat String courseName;
+    private String email;
+    private String instructorEmail;
+    private int duration;
+    private String description;
+    private LocalDate registerDate;
 	
-	/**
-	 * Show information of student, course, registered course
-	 */
-	@Override
-	public String toString() {
-		return "RegisterCourseDTO [courseID=" + courseID + ", studentID=" + studentID + ", username=" + username
-				+ ", courseName=" + courseName + ", instructorEmail=" + instructorEmail + ", duration=" + duration
-				+ ", description=" + description + ", registerDate=" + registerDate + "]";
-	}	
+    /**
+     * Show information of student, course, registered course
+     */
+    @Override
+    public String toString() {
+        return "RegisterCourseDTO [courseID=" + courseID + ", studentID=" + studentID + ", username=" + username
+	        + ", courseName=" + courseName + ", instructorEmail=" + instructorEmail + ", duration=" + duration
+                + ", description=" + description + ", registerDate=" + registerDate + "]";
+    }	
 }
