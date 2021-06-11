@@ -28,17 +28,16 @@ import com.shin.demotypescript.utils.ErrorCode;
  */
 @Component
 public class JwtUnAuthorizedResponseAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
+    private static final long serialVersionUID = -8970718410437077606L;
 
-	private static final long serialVersionUID = -8970718410437077606L;
-
-	/**
-	 * commence
-	 * @param request
-	 * @param response
-	 */
-	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException {
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ErrorCode.UNAUTHORIZED);
-	}
+    /**
+     * commence
+     * @param request
+     * @param response
+     */
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException authException) throws IOException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ErrorCode.UNAUTHORIZED);
+    }
 }
