@@ -81,7 +81,7 @@ public class CourseController {
 	 */
 	@PostMapping("/add")
 	public ResponseEntity<String> saveCourse(@RequestBody @Validated Course course, BindingResult result) {
-		// in case invalid object, send error message to client
+	    // in case invalid object, send error message to client
 	    if (result.hasErrors()) {
 	        String errorMessage = "";
 	        for (ObjectError objectError : result.getAllErrors()) {
