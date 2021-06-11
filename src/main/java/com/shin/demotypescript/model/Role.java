@@ -37,21 +37,21 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Role {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "role_id", nullable = false)
-	private long roleID;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id", nullable = false)
+    private long roleID;
 
-	@Column
-	private String name;
+    @Column
+    private String name;
 
-	@Column
-	private String description;
+    @Column
+    private String description
 	
-	/**
-	 * map table role with table student
-	 */
-	@Transient
-	@OneToOne(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    /**
+     * map table role with table student
+     */
+    @Transient
+    @OneToOne(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Student student;
 }
