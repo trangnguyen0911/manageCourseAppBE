@@ -46,7 +46,7 @@ public class Role {
     private String name;
 
     @Column
-    private String description
+    private String description;
 	
     /**
      * map table role with table student
