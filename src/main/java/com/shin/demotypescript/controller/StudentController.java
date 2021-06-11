@@ -37,77 +37,77 @@ import com.shin.demotypescript.service.impl.StudentServiceImpl;
 @RestController
 @RequestMapping("/users")
 public class StudentController {
-	@Autowired
-	private StudentServiceImpl service;
+    @Autowired
+    private StudentServiceImpl service;
+
+    /**
+    * controller to get list of students
+    * @return List<Student>
+    */
+    @GetMapping("/all")
+    public List<Student> getAllStudents(){
+	return service.getAllStudents();
+    }
 	
-	/**
-	 * controller to get list of students
-	 * @return List<Student>
-	 */
-	@GetMapping("/all")
-	public List<Student> getAllStudents(){
-		return service.getAllStudents();
+    /**
+    * controller to get student by user name
+    * @param username
+    * @return student
+    */
+    @GetMapping("/{username}")
+    public Student getStudentByUsername(@PathVariable String username){
+        return service.getStudentByUsername(username);
+    }
+
+    /**
+    * controller to search list of students
+    * @param contentSearch
+    * @return List<Student>
+    */
+    @GetMapping("/search/{contentSearch}")
+    public List<Student> getSearchedStudents(@PathVariable String contentSearch){
+	return service.getFilterStudent(contentSearch);
+    }
+	
+    /**
+    * controller to add new student
+    * @param student
+    * @param result
+    * @return ResponseEntity<String>
+    */
+    @PostMapping("/add")
+    public ResponseEntity<String> saveStudent(@RequestBody @Validated Student student, BindingResult result){	
+        if (result.hasErrors()) {
+	    String errorMessage = "";
+	    for (ObjectError objectError : result.getAllErrors()) {
+	        errorMessage += objectError.getDefaultMessage() + ". ";	
+	    }
+	    return new ResponseEntity<>(errorMessage, HttpStatus.OK);
 	}
-	
-	/**
-	 * controller to get student by user name
-	 * @param username
-	 * @return student
-	 */
-	@GetMapping("/{username}")
-	public Student getStudentByUsername(@PathVariable String username){
-		return service.getStudentByUsername(username);
-	}
-	
-	/**
-	 * controller to search list of students
-	 * @param contentSearch
-	 * @return List<Student>
-	 */
-	@GetMapping("/search/{contentSearch}")
-	public List<Student> getSearchedStudents(@PathVariable String contentSearch){
-		return service.getFilterStudent(contentSearch);
-	}
-	
-	/**
-	 * controller to add new student
-	 * @param student
-	 * @param result
-	 * @return ResponseEntity<String>
-	 */
-	@PostMapping("/add")
-	public ResponseEntity<String> saveStudent(@RequestBody @Validated Student student, BindingResult result){	
-		if (result.hasErrors()) {
-			String errorMessage = "";
-			for (ObjectError objectError : result.getAllErrors()) {
-				errorMessage += objectError.getDefaultMessage() + ". ";	
-			}
-			return new ResponseEntity<>(errorMessage, HttpStatus.OK);
-		}
 		
-		String status = service.saveStudent(student);
+        String status = service.saveStudent(student);
 		
-		return new ResponseEntity<>(status, HttpStatus.OK);
-	}
+        return new ResponseEntity<>(status, HttpStatus.OK);
+    }
 	
-	/**
-	 * controller to update a student
-	 * @param username
-	 * @param student
-	 * @param result
-	 * @return ResponseEntity<String>
-	 */
-	@PostMapping("/{username}/edit")
-	public ResponseEntity<String> updateStudent(@PathVariable String username, @RequestBody @Validated Student student, BindingResult result){		
-		if (result.hasErrors()) {
-			String errorMessage = "";
-			for (ObjectError objectError : result.getAllErrors()) {
-				errorMessage += objectError.getDefaultMessage() + ". ";	
-			}
-			return new ResponseEntity<>(errorMessage, HttpStatus.OK);
-		}
+    /**
+    * controller to update a student
+    * @param username
+    * @param student
+    * @param result
+    * @return ResponseEntity<String>
+    */
+    @PostMapping("/{username}/edit")
+    public ResponseEntity<String> updateStudent(@PathVariable String username, @RequestBody @Validated Student student, BindingResult result){		
+        if (result.hasErrors()) {
+            String errorMessage = "";
+            for (ObjectError objectError : result.getAllErrors()) {
+                errorMessage += objectError.getDefaultMessage() + ". ";	
+            }
+            return new ResponseEntity<>(errorMessage, HttpStatus.OK);
+        }
 		
-		String status = service.updateStudent(username, student);
-		return new ResponseEntity<>(status, HttpStatus.OK);
-	}
+        String status = service.updateStudent(username, student);
+        return new ResponseEntity<>(status, HttpStatus.OK);
+    }
 }
