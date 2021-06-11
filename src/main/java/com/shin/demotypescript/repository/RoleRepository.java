@@ -19,10 +19,10 @@ import com.shin.demotypescript.model.Role;
  * 01-6-2021 TrangNTT46 Create
  */
 public interface RoleRepository extends JpaRepository<Role, Long> {
-	/**
-	 * find role by name
-	 * @param name
-	 * @return Role
-	 */
-	Role findByName(String name);
+    /**
+     * find role by name
+     * @param name
+     * @return Role
+     */
+    Role findByName(String name);
 }
