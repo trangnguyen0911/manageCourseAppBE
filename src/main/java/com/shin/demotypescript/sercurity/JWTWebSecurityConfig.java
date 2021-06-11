@@ -35,74 +35,73 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class JWTWebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private JwtUnAuthorizedResponseAuthenticationEntryPoint jwtUnAuthorizedResponseAuthenticationEntryPoint;
 
-	@Autowired
-	private JwtUnAuthorizedResponseAuthenticationEntryPoint jwtUnAuthorizedResponseAuthenticationEntryPoint;
+    @Autowired
+    private UserDetailsService jwtInMemoryUserDetailsService;
 
-	@Autowired
-	private UserDetailsService jwtInMemoryUserDetailsService;
+    @Autowired
+    private JwtTokenAuthorizationOncePerRequestFilter jwtAuthenticationTokenFilter;
 
-	@Autowired
-	private JwtTokenAuthorizationOncePerRequestFilter jwtAuthenticationTokenFilter;
+    @Value("${jwt.get.token.uri}")
+    private String authenticationPath;
 
-	@Value("${jwt.get.token.uri}")
-	private String authenticationPath;
+    /**
+     * configure global
+     * 
+     * @param auth
+     * @throws Exception
+     */
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(jwtInMemoryUserDetailsService).passwordEncoder(passwordEncoderBean());
+    }
 
-	/**
-	 * configure global
-	 * 
-	 * @param auth
-	 * @throws Exception
-	 */
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(jwtInMemoryUserDetailsService).passwordEncoder(passwordEncoderBean());
-	}
+    /**
+     * create PasswordEncoder
+     * 
+     * @return PasswordEncoder
+     */
+    @Bean
+    public PasswordEncoder passwordEncoderBean() {
+        return new BCryptPasswordEncoder();
+    }
 
-	/**
-	 * create PasswordEncoder
-	 * 
-	 * @return PasswordEncoder
-	 */
-	@Bean
-	public PasswordEncoder passwordEncoderBean() {
-		return new BCryptPasswordEncoder();
-	}
+    /**
+     * authentication manager bean
+     */
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
-	/**
-	 * authentication manager bean
-	 */
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
-	}
+    /**
+     * configure
+     * 
+     * @param httpSecurity
+     */
+    @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.cors().and().csrf().disable().exceptionHandling()
+                .authenticationEntryPoint(jwtUnAuthorizedResponseAuthenticationEntryPoint).and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+                .antMatchers("/authenticate").permitAll().antMatchers("/users/**").permitAll()
+                .antMatchers("/courses/**").permitAll().antMatchers("/registercourse/all").hasRole("ADMIN")
+                .anyRequest().authenticated();
 
-	/**
-	 * configure
-	 * 
-	 * @param httpSecurity
-	 */
-	@Override
-	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.cors().and().csrf().disable().exceptionHandling()
-				.authenticationEntryPoint(jwtUnAuthorizedResponseAuthenticationEntryPoint).and().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-				.antMatchers("/authenticate").permitAll().antMatchers("/users/**").permitAll()
-				.antMatchers("/courses/**").permitAll().antMatchers("/registercourse/all").hasRole("ADMIN")
-				.anyRequest().authenticated();
+        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
-		httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-		httpSecurity.headers().cacheControl();
-	}
+        httpSecurity.headers().cacheControl();
+    }
 	
-	/**
-	 * configure
-	 * @param webSecurity
-	 */
-	@Override
-	public void configure(WebSecurity webSecurity) throws Exception {
-		webSecurity.ignoring().antMatchers("/**");
-	}
+    /**
+     * configure
+     * @param webSecurity
+     */
+    @Override
+    public void configure(WebSecurity webSecurity) throws Exception {
+        webSecurity.ignoring().antMatchers("/**");
+    }
 }
