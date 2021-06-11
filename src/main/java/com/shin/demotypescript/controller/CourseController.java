@@ -37,108 +37,107 @@ import com.shin.demotypescript.service.impl.CourseServiceImpl;
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
-	@Autowired
-	private CourseServiceImpl service;
+    @Autowired
+    private CourseServiceImpl service;
 
-	/**
-	 * controller to get list of all courses
-	 * 
-	 * @return List<Course>
-	 */
-	@GetMapping("/all")
-	public List<Course> getAllCourses() {
-	    return service.getAllCourse();
-	}
+    /**
+    * controller to get list of all courses
+    * 
+    * @return List<Course>
+    */
+    @GetMapping("/all")
+    public List<Course> getAllCourses() {
+        return service.getAllCourse();
+    }
 
-	/**
-	 * controller to search courses
-	 * 
-	 * @param content search
-	 * @return List<Course>
-	 */
-	@GetMapping("/search/{contentSearch}")
-	public List<Course> getSearchedCourses(@PathVariable String contentSearch) {
-	    return service.getFilterCourse(contentSearch);
-	}
+    /**
+    * controller to search courses
+    * 
+    * @param content search
+    * @return List<Course>
+    */
+    @GetMapping("/search/{contentSearch}")
+    public List<Course> getSearchedCourses(@PathVariable String contentSearch) {
+        return service.getFilterCourse(contentSearch);
+    }
 
-	/**
-	 * controller sort courses
-	 * 
-	 * @param field, type
-	 * @return List<Course>
-	 */
-	@GetMapping("/sort/{field}/{type}")
-	public List<Course> getSortedCourses(@PathVariable String field, @PathVariable boolean type) {
-	    return service.getSortedCourse(field, type);
-	}
+    /**
+    * controller sort courses
+    * 
+    * @param field, type
+    * @return List<Course>
+    */
+    @GetMapping("/sort/{field}/{type}")
+    public List<Course> getSortedCourses(@PathVariable String field, @PathVariable boolean type) {
+        return service.getSortedCourse(field, type);
+    }
 
-	/**
-	 * controller to add new course
-	 * 
-	 * @param course
-	 * @param result
-	 * @return ResponseEntity<String>
-	 */
-	@PostMapping("/add")
-	public ResponseEntity<String> saveCourse(@RequestBody @Validated Course course, BindingResult result) {
-	    // in case invalid object, send error message to client
-	    if (result.hasErrors()) {
-	        String errorMessage = "";
-	        for (ObjectError objectError : result.getAllErrors()) {
-			errorMessage += objectError.getDefaultMessage() + ". ";
-	        }
-	        return new ResponseEntity<>(errorMessage, HttpStatus.OK);
-	    }
+    /**
+    * controller to add new course
+    * 
+    * @param course
+    * @param result
+    * @return ResponseEntity<String>
+    */
+    @PostMapping("/add")
+    public ResponseEntity<String> saveCourse(@RequestBody @Validated Course course, BindingResult result) {
+        // in case invalid object, send error message to client
+        if (result.hasErrors()) {
+            String errorMessage = "";
+            for (ObjectError objectError : result.getAllErrors()) {
+                errorMessage += objectError.getDefaultMessage() + ". ";
+            }
+            return new ResponseEntity<>(errorMessage, HttpStatus.OK);
+        }
 
-	    String status = service.saveCourse(course);
-	    return new ResponseEntity<>(status, HttpStatus.OK);
-	}
+        String status = service.saveCourse(course);
+        return new ResponseEntity<>(status, HttpStatus.OK);
+    }
 
-	/**
-	 * controller to update course
-	 * @param id
-	 * @param course
-	 * @param result
-	 * @return ResponseEntity<String>
-	 */
-	@PostMapping("/course/edit/{id}")
-	public ResponseEntity<String> updateCourse(@PathVariable long id, @RequestBody @Validated Course course,
-			BindingResult result) {
-		// in case invalid object, send error message to client
-	    if (result.hasErrors()) {
-	        String errorMessage = "";
-	        for (ObjectError objectError : result.getAllErrors()) {
-		    errorMessage += objectError.getDefaultMessage() + ". ";
-	        }
-	        return new ResponseEntity<>(errorMessage, HttpStatus.OK);
-	    }
+    /**
+    * controller to update course
+    * @param id
+    * @param course
+    * @param result
+    * @return ResponseEntity<String>
+    */
+    @PostMapping("/course/edit/{id}")
+    public ResponseEntity<String> updateCourse(@PathVariable long id, @RequestBody @Validated Course course,
+            BindingResult result) {
+        // in case invalid object, send error message to client
+	if (result.hasErrors()) {
+            String errorMessage = "";
+            for (ObjectError objectError : result.getAllErrors()) {
+	        errorMessage += objectError.getDefaultMessage() + ". ";
+            }
+	    return new ResponseEntity<>(errorMessage, HttpStatus.OK);
+        }
+        String status = service.updateCourse(id, course);
 
-	    String status = service.updateCourse(id, course);
+        return new ResponseEntity<>(status, HttpStatus.OK);
+    }
 
-	    return new ResponseEntity<>(status, HttpStatus.OK);
-	}
+    /**
+    * controller to delete course
+    * @param id
+    * @return ResponseEntity<String>
+    */
+    @PostMapping("/course/delete/{id}")
+    public ResponseEntity<String> deleteCourse(@PathVariable long id) {
+        String status = service.deleteCourse(id);
 
-	/**
-	 * controller to delete course
-	 * @param id
-	 * @return ResponseEntity<String>
-	 */
-	@PostMapping("/course/delete/{id}")
-	public ResponseEntity<String> deleteCourse(@PathVariable long id) {
-	    String status = service.deleteCourse(id);
+        return new ResponseEntity<>(status, HttpStatus.OK);
+    }
 
-	    return new ResponseEntity<>(status, HttpStatus.OK);
-	}
+    /**
+    * controller to confirm course is active or not
+    * @param id
+    * @return ResponseEntity<String>
+    */
+    @PostMapping("/course/confirm/{id}")
+    public ResponseEntity<String> confirmUpdateCourse(@PathVariable long id) {
+        String status = service.confirmUpdateCourse(id);
 
-	/**
-	 * controller to confirm course is active or not
-	 * @param id
-	 * @return ResponseEntity<String>
-	 */
-	@PostMapping("/course/confirm/{id}")
-	public ResponseEntity<String> confirmUpdateCourse(@PathVariable long id) {
-	    String status = service.confirmUpdateCourse(id);
-
-	    return new ResponseEntity<>(status, HttpStatus.OK);
-	}
+        return new ResponseEntity<>(status, HttpStatus.OK);
+    }
 }
