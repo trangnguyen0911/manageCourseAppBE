@@ -80,7 +80,7 @@ public class Student {
     @Digits(integer = 10, fraction = 0)
     private int status;
 
-    // Male: 0, Female: 1, Other: 2
+    // Male: 0, Female: 1
     @Column(name = "gender", nullable = false)
     @Digits(integer = 3, fraction = 0)
     private int gender;
