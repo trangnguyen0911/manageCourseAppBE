@@ -29,9 +29,9 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class RegisterCourseDTO {
     private Long courseID;
-    priate Long studentID;
+    private Long studentID;
     private String username;
-    privat String courseName;
+    private String courseName;
     private String email;
     private String instructorEmail;
     private int duration;
