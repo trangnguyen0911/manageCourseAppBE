@@ -24,22 +24,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class UserDTO {
-	private long studentID;
-	private String username;
-	private String password;
-	private String role;
+    private long studentID;
+    private String username;
+    private String password;
+    private String role;
 	
-	/**
-	 * initial userDTO
-	 * @param studentID
-	 * @param username
-	 * @param password
-	 * @param role
-	 */
-	public UserDTO (long studentID, String username, String password, Role role) {
-		this.studentID = studentID;
-		this.username = username;
-		this.password = password;
-		this.role = role.getName();
-	}
+    /**
+     * initial userDTO
+     * @param studentID
+     * @param username
+     * @param password
+     * @param role
+     */
+    public UserDTO (long studentID, String username, String password, Role role) {
+        this.studentID = studentID;
+        this.username = username;
+        this.password = password;
+        this.role = role.getName();
+    }
 }
