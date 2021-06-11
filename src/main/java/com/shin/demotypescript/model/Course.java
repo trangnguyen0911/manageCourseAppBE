@@ -47,70 +47,69 @@ import com.shin.demotypescript.utils.ValidateMessage;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Course {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "course_id", nullable = false)
-	private Long courseID;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "course_id", nullable = false)
+    private Long courseID;
 	
-	@Column(name = "course_name", length = 50, nullable = false)
-	@NotBlank(message = ValidateMessage.NOT_BLANK +  "course name")
-	@Length(max = 50, message = ValidateMessage.LENGTH_COURSE_NAME)
-	private String courseName;
+    @Column(name = "course_name", length = 50, nullable = false)
+    @NotBlank(message = ValidateMessage.NOT_BLANK +  "course name")
+    @Length(max = 50, message = ValidateMessage.LENGTH_COURSE_NAME)
+    private String courseName;
 	
-	@NotBlank(message = ValidateMessage.NOT_BLANK +  "description")
-	@Column(name = "description", length = 200, nullable = false)
-	@Length(max = 200, message = ValidateMessage.LENGTH_DESCRIPTION)
-	private String description;
+    @NotBlank(message = ValidateMessage.NOT_BLANK +  "description")
+    @Column(name = "description", length = 200, nullable = false)
+    @Length(max = 200, message = ValidateMessage.LENGTH_DESCRIPTION)
+    private String description;
 	
-	@Email(message = ValidateMessage.EMAIL)
-	@Column(name = "instructor_email", length = 100, nullable = false)
-	@NotBlank(message = ValidateMessage.NOT_BLANK + "instructor's email")
-	private String instructorEmail;
+    @Email(message = ValidateMessage.EMAIL)
+    @Column(name = "instructor_email", length = 100, nullable = false)
+    @NotBlank(message = ValidateMessage.NOT_BLANK + "instructor's email")
+    private String instructorEmail;
 	
-	@Column(name = "duration", nullable = false)
-	@Min(value = 0L, message = "Duration" + ValidateMessage.POSITIVE_NUMBER)
-	@Digits(integer = 10, fraction = 0, message = "Duration" + ValidateMessage.POSITIVE_NUMBER)
-	@NotNull(message = ValidateMessage.NOT_BLANK + "duration")
-	private int duration;
+    @Column(name = "duration", nullable = false)
+    @Min(value = 0L, message = "Duration" + ValidateMessage.POSITIVE_NUMBER)
+    @Digits(integer = 10, fraction = 0, message = "Duration" + ValidateMessage.POSITIVE_NUMBER)
+    @NotNull(message = ValidateMessage.NOT_BLANK + "duration")
+    private int duration;
 	
-	@Column(name = "fee", nullable = false)
-	@Min(value = 0L, message = "Fee" + ValidateMessage.POSITIVE_NUMBER)
-	@Digits(integer = 10, fraction = 0, message = "Fee" + ValidateMessage.POSITIVE_NUMBER)
-	@NotNull(message = ValidateMessage.NOT_BLANK + "fee")
-	private int fee;
+    @Column(name = "fee", nullable = false)
+    @Min(value = 0L, message = "Fee" + ValidateMessage.POSITIVE_NUMBER)
+    @Digits(integer = 10, fraction = 0, message = "Fee" + ValidateMessage.POSITIVE_NUMBER)
+    @NotNull(message = ValidateMessage.NOT_BLANK + "fee")
+    private int fee;
 	
-	@Column(name = "status", nullable = false)
-	@Digits(integer = 10, fraction = 0)
-	private int status;
+    @Column(name = "status", nullable = false)
+    @Digits(integer = 10, fraction = 0)
+    private int status;
 	
-	@OneToMany(mappedBy = "course", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<RegisterCourse> registerCourses;
 
-	/**
-	 * initial new course
-	 * @param courseName
-	 * @param description
-	 * @param email
-	 * @param duration
-	 * @param fee
-	 */
-	public Course(String courseName, String description, String email, Integer duration, Integer fee) {
-		super();
-		this.courseName = courseName;
-		this.description = description;
-		this.instructorEmail = email;
-		this.duration = duration;
-		this.fee = fee;
-		this.status = 1;
-	}
+    /**
+     * initial new course
+     * @param courseName 
+     * @param description
+     * @param email
+     * @param duration
+     * @param fee
+     */
+    public Course(String courseName, String description, String email, Integer duration, Integer fee) {
+        super();
+        this.courseName = courseName;
+        this.description = description;
+        this.instructorEmail = email;
+        this.duration = duration;
+        this.fee = fee;
+        this.status = 1;
+    }
 
-	/**
-	 * show course information
-	 */
-	@Override
-	public String toString() {
-		return "Course [courseName=" + courseName + ", description=" + description + ", instructorEmail="
-				+ instructorEmail + ", duration=" + duration + ", fee=" + fee + "]";
-	}
+    /**
+     * show course information
+     */
+    @Override
+    public String toString() {
+        return "Course [courseName=" + courseName + ", description=" + description + ", instructorEmail="
+                + instructorEmail + ", duration=" + duration + ", fee=" + fee + "]";
+    }
 }
-
