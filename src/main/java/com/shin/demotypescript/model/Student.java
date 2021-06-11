@@ -51,77 +51,77 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Student {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "student_id", nullable = false)
-	private Long studentID;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "student_id", nullable = false)
+    private Long studentID;
 
-	@NotBlank(message = ValidateMessage.NOT_BLANK +  "user name")
-	@Column(name = "user_name", length = 20, nullable = false)
-	@Length(max = 20, message = ValidateMessage.LENGTH_USER_NAME)
-	private String username;
+    @NotBlank(message = ValidateMessage.NOT_BLANK +  "user name")
+    @Column(name = "user_name", length = 20, nullable = false)
+    @Length(max = 20, message = ValidateMessage.LENGTH_USER_NAME)
+    private String username;
 
-	@NotBlank(message = ValidateMessage.NOT_BLANK +  "student's name")
-	@Column(name = "fullname", length = 50, nullable = false)
-	@Length(max = 50, message = ValidateMessage.LENGTH_FULL_NAME)
-	private String fullname;
+    @NotBlank(message = ValidateMessage.NOT_BLANK +  "student's name")
+    @Column(name = "fullname", length = 50, nullable = false)
+    @Length(max = 50, message = ValidateMessage.LENGTH_FULL_NAME)
+    private String fullname;
 
-	@Column(name = "email", length = 50, nullable = false)
-	@Email(message = ValidateMessage.EMAIL)
-	@NotBlank(message = ValidateMessage.NOT_BLANK +  "email")
-	private String email;
+    @Column(name = "email", length = 50, nullable = false)
+    @Email(message = ValidateMessage.EMAIL)
+    @NotBlank(message = ValidateMessage.NOT_BLANK +  "email")
+    private String email;
 
-	@Column(name = "birth_date", nullable = false)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	@NotNull
-	private LocalDate birthdate;
+    @Column(name = "birth_date", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull
+    private LocalDate birthdate;
 
-	@Column(name = "status", nullable = false)
-	@Digits(integer = 10, fraction = 0)
-	private int status;
+    @Column(name = "status", nullable = false)
+    @Digits(integer = 10, fraction = 0)
+    private int status;
 
-	// Male: 0, Female: 1, Other: 2
-	@Column(name = "gender", nullable = false)
-	@Digits(integer = 3, fraction = 0)
-	private int gender;
+    // Male: 0, Female: 1, Other: 2
+    @Column(name = "gender", nullable = false)
+    @Digits(integer = 3, fraction = 0)
+    private int gender;
 
-	@NotBlank(message = ValidateMessage.NOT_BLANK +  "password")
-	@Column(name = "password", length = 200, nullable = false)
-	private String password;
+    @NotBlank(message = ValidateMessage.NOT_BLANK +  "password")
+    @Column(name = "password", length = 200, nullable = false)
+    private String password;
 
-	@OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	List<RegisterCourse> registerCourses;
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    List<RegisterCourse> registerCourses;
 	
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
     @JoinColumn(name = "role_id")
     private Role role;
 
-	/**
-	 * initial a new student
-	 * @param username
-	 * @param fullname
-	 * @param birthDate
-	 * @param gender
-	 * @param password
-	 */
-	public Student(String username, String fullname, LocalDate birthDate, int gender, String password) {
-		super();
-		this.username = username;
-		this.fullname = fullname;
-		this.birthdate = birthDate;
-		this.gender = gender;
-		this.password = password;
-		this.status = 1;
-	}
+    /**
+     * initial a new student
+     * @param username
+     * @param fullname
+     * @param birthDate
+     * @param gender
+     * @param password
+     */
+    public Student(String username, String fullname, LocalDate birthDate, int gender, String password) {
+        super();
+        this.username = username;
+        this.fullname = fullname;
+        this.birthdate = birthDate;
+        this.gender = gender;
+        this.password = password;
+        this.status = 1;
+    }
 
-	/**
-	 * show information of student
-	 */
-	@Override
-	public String toString() {
-		return "Student [studentID=" + studentID + ", username=" + username + ", fullname=" + fullname + ", email="
-				+ email + ", birthdate=" + birthdate + ", status=" + status + ", gender=" + gender + ", password="
-				+ password + ", registerCourses=" + registerCourses + ", roles=" + role + "]";
-	}	
+    /**
+     * show information of student
+     */
+    @Override
+    public String toString() {
+        return "Student [studentID=" + studentID + ", username=" + username + ", fullname=" + fullname + ", email="
+                + email + ", birthdate=" + birthdate + ", status=" + status + ", gender=" + gender + ", password="
+                + password + ", registerCourses=" + registerCourses + ", roles=" + role + "]";
+    }
 }
