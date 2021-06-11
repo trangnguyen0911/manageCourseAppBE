@@ -26,49 +26,47 @@ import com.shin.demotypescript.model.UserDTO;
  */
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
-	/**
-	 * search list of students
-	 * @param contentSearch
-	 * @return List<Student>
-	 */
-	@Query(
-			value = "SELECT * FROM student "
-					+ "WHERE status = 1 "
-					+ "AND fullname LIKE %:contentSearch% "
-					+ "OR CAST(year_of_birth AS varchar) LIKE %:contentSearch%", nativeQuery = true)
-	public List<Student> findSearchedStudents(@Param("contentSearch") String contentSearch);
+    /**
+     * search list of students
+     * @param contentSearch
+     * @return List<Student>
+     */
+    @Query(value = "SELECT * FROM student "
+            + "WHERE status = 1 "
+            + "AND fullname LIKE %:contentSearch% "
+            + "OR CAST(year_of_birth AS varchar) LIKE %:contentSearch%", nativeQuery = true)
+    public List<Student> findSearchedStudents(@Param("contentSearch") String contentSearch);
 	
-	/**
-	 * find active students
-	 * @return List<Student
-	 */
-	@Query(
-			value = "SELECT * FROM student "
-					+ "WHERE status = 1", nativeQuery = true)
-	public List<Student> findActiveStudents();
+    /**    
+     * find active students
+     * @return List<Student
+     */
+    @Query(value = "SELECT * FROM student "
+            + "WHERE status = 1", nativeQuery = true)
+    public List<Student> findActiveStudents();
 	
-	/**
-	 * find student by email and status
-	 * @param email
-	 * @param status
-	 * @return Student
-	 */
-	public Student findByEmailIgnoreCaseAndStatus(String email, int status);
+    /**
+     * find student by email and status
+     * @param email
+     * @param status
+     * @return Student
+     */
+    public Student findByEmailIgnoreCaseAndStatus(String email, int status);
 	
-	/**
-	 * find student by user name and status
-	 * @param username
-	 * @param status
-	 * @return Student
-	 */
-	public Student findByUsernameIgnoreCaseAndStatus(String username, int status);
+    /**
+     * find student by user name and status
+     * @param username
+     * @param status
+     * @return Student
+     */
+    public Student findByUsernameIgnoreCaseAndStatus(String username, int status);
 	
-	/**
-	 * find user information to log in
-	 * @param username
-	 * @return UserDTO
-	 */
-	@Query(value = "SELECT new com.shin.demotypescript.model.UserDTO (s.studentID, "
-			+ "s.username, s.password, s.role) FROM Student s WHERE s.username = :username AND s.status = 1")
-	public UserDTO findUserByUsername(@Param("username") String username);
+    /**
+     * find user information to log in
+     * @param username
+     * @return UserDTO
+     */
+    @Query(value = "SELECT new com.shin.demotypescript.model.UserDTO (s.studentID, "
+            + "s.username, s.password, s.role) FROM Student s WHERE s.username = :username AND s.status = 1")
+    public UserDTO findUserByUsername(@Param("username") String username);
 }
