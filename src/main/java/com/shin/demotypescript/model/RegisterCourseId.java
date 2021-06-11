@@ -30,10 +30,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class RegisterCourseId implements Serializable {
-	private static final long serialVersionUID = 1L;
-
-	private long studentID;
-	private long courseID;
-	private LocalDate registerDate;
-	private LocalTime registerTime;
+    private static final long serialVersionUID = 1L;
+    private long studentID;
+    private long courseID;
+    private LocalDate registerDate;
+    private LocalTime registerTime;
 }
