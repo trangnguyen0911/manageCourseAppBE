@@ -15,13 +15,13 @@ package com.shin.demotypescript.sercurity.resource;
  * 01-6-2021  TrangNTT46    Create
  */
 public class AuthenticationException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * define authentication exception
-	 * @param message
-	 * @param cause
-	 */
+    /**
+     * define authentication exception
+     * @param message
+     * @param cause
+     */
     public AuthenticationException(String message, Throwable cause) {
         super(message, cause);
     }
