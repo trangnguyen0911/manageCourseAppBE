@@ -25,23 +25,23 @@ import com.shin.demotypescript.repository.StudentRepository;
  */
 @Service
 public class JwtInMemoryUserDetailsService implements UserDetailsService {
-	@Autowired 
-	private StudentRepository studentRepo;
+    @Autowired 
+    private StudentRepository studentRepo;
 
-	/**
-	 * Load user by user name when login
-	 * @param username
-	 * @throws UsernameNotFoundException
-	 * @return UserDetails
-	 */
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserDTO user = studentRepo.findUserByUsername(username);
+    /**
+     * Load user by user name when login
+     * @param username
+     * @throws UsernameNotFoundException
+     * @return UserDetails
+     */
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserDTO user = studentRepo.findUserByUsername(username);
 
-		if (user == null) {
-			throw new UsernameNotFoundException(String.format("USER_NOT_FOUND '%s'.", username));
-		}
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("USER_NOT_FOUND '%s'.", username));
+        }
 
-		return new JwtUserDetails(user.getStudentID(), user.getUsername(), user.getPassword(), user.getRole());
-	}
+        return new JwtUserDetails(user.getStudentID(), user.getUsername(), user.getPassword(), user.getRole());
+    }
 }
