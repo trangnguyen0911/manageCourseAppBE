@@ -43,89 +43,84 @@ import com.shin.demotypescript.sercurity.JwtUserDetails;
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class JwtAuthenticationRestController {
+    @Value("${jwt.http.request.header}")
+    private String tokenHeader;
 
-	@Value("${jwt.http.request.header}")
-	private String tokenHeader;
-
-	@Autowired
-	private AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 	
-	@Autowired 
-	private StudentRepository studentRepo;
+    @Autowired 
+    private StudentRepository studentRepo;
+    
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
-	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserDetailsService jwtInMemoryUserDetailsService;
 
-	@Autowired
-	private UserDetailsService jwtInMemoryUserDetailsService;
+    /**
+     * create authentication token
+     * @param authenticationRequest
+     * @return ResponseEntity<?>
+     * @throws AuthenticationException
+     */
+    @RequestMapping(value = "${jwt.get.token.uri}", method = RequestMethod.POST)
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtTokenRequest authenticationRequest)
+            throws AuthenticationException {
+        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        final UserDetails userDetails = jwtInMemoryUserDetailsService
+                .loadUserByUsername(authenticationRequest.getUsername());
+        UserDTO user = studentRepo.findUserByUsername(authenticationRequest.getUsername());	
+        final String token = jwtTokenUtil.generateToken(userDetails);
 
-	/**
-	 * create authentication token
-	 * @param authenticationRequest
-	 * @return ResponseEntity<?>
-	 * @throws AuthenticationException
-	 */
-	@RequestMapping(value = "${jwt.get.token.uri}", method = RequestMethod.POST)
-	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtTokenRequest authenticationRequest)
-			throws AuthenticationException {
+        return ResponseEntity.ok(new JwtTokenResponse(token, user.getRole()));
+    }
 
-		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+    /**
+     * refresh and get authentication token
+     * @param request
+     * @return ResponseEntity<?>
+     */
+    @RequestMapping(value = "${jwt.refresh.token.uri}", method = RequestMethod.GET)
+    public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
+        String authToken = request.getHeader(tokenHeader);
+        final String token = authToken.substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        JwtUserDetails user = (JwtUserDetails) jwtInMemoryUserDetailsService.loadUserByUsername(username);
 
-		final UserDetails userDetails = jwtInMemoryUserDetailsService
-				.loadUserByUsername(authenticationRequest.getUsername());
-		
-		UserDTO user = studentRepo.findUserByUsername(authenticationRequest.getUsername());
-		
-		final String token = jwtTokenUtil.generateToken(userDetails);
+        if (jwtTokenUtil.canTokenBeRefreshed(token)) {
+            String refreshedToken = jwtTokenUtil.refreshToken(token);
+            return ResponseEntity.ok(new JwtTokenResponse(refreshedToken, user.getRole()));
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 
-		return ResponseEntity.ok(new JwtTokenResponse(token, user.getRole()));
-	}
+    /**
+     * handle authentication exception
+     * @param e
+     * @return ResponseEntity<String>
+     */
+    @ExceptionHandler({ AuthenticationException.class })
+    public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
 
-	/**
-	 * refresh and get authentication token
-	 * @param request
-	 * @return ResponseEntity<?>
-	 */
-	@RequestMapping(value = "${jwt.refresh.token.uri}", method = RequestMethod.GET)
-	public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
-		String authToken = request.getHeader(tokenHeader);
-		final String token = authToken.substring(7);
-		String username = jwtTokenUtil.getUsernameFromToken(token);
-		JwtUserDetails user = (JwtUserDetails) jwtInMemoryUserDetailsService.loadUserByUsername(username);
+    /*
+     * authenticate
+     * @param username
+     * @param password
+     */
+    private void authenticate(String username, String password) {
+        Objects.requireNonNull(username);
+        Objects.requireNonNull(password);
 
-		if (jwtTokenUtil.canTokenBeRefreshed(token)) {
-			String refreshedToken = jwtTokenUtil.refreshToken(token);
-			return ResponseEntity.ok(new JwtTokenResponse(refreshedToken, user.getRole()));
-		} else {
-			return ResponseEntity.badRequest().body(null);
-		}
-	}
-
-	/**
-	 * handle authentication exception
-	 * @param e
-	 * @return ResponseEntity<String>
-	 */
-	@ExceptionHandler({ AuthenticationException.class })
-	public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-	}
-
-	/**
-	 * authenticate
-	 * @param username
-	 * @param password
-	 */
-	private void authenticate(String username, String password) {
-		Objects.requireNonNull(username);
-		Objects.requireNonNull(password);
-
-		try {
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-		} catch (DisabledException e) {
-			throw new AuthenticationException("USER_DISABLED", e);
-		} catch (BadCredentialsException e) {
-			throw new AuthenticationException("INVALID_CREDENTIALS", e);
-		}
-	}
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (DisabledException e) {
+            throw new AuthenticationException("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new AuthenticationException("INVALID_CREDENTIALS", e);
+        }
+    }
 }
